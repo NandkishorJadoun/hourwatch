@@ -12,6 +12,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "cf-typegen": "wrangler types",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:migrate": "wrangler d1 migrations apply first6-db",
     "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
+    "@cloudflare/workers-types": "^5.20260814.1",
     "@tanstack/router-cli": "^1.132.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",

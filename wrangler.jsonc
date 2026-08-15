@@ -2,14 +2,15 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "first6",
   "compatibility_date": "2025-09-02",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "main": "@tanstack/react-start/server-entry",
-  "migrations_dir": "migrations",
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "first6-db",
-      "database_id": "<replace-me: run `wrangler d1 create first6-db` to get your database id>"
+      "database_id": "6f2d008f-8955-420b-ac4a-f5473c7ec7a5"
     }
   ]
 }

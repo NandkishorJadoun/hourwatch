@@ -147,7 +147,7 @@ async function notifySnapshot(
 function withBaselineCopy(viewCount: number, hourOffset: number, baseline: number): string {
   const pct = baseline === 0 ? 0 : Math.round(((viewCount - baseline) / baseline) * 100)
   const direction = pct >= 0 ? 'above' : 'below'
-  return `${viewCount.toLocaleString()} views at hour ${hourOffset} — ${Math.abs(
+  return `${viewCount.toLocaleString()} views at hour ${hourOffset}: ${Math.abs(
     pct,
   )}% ${direction} your channel average (${Math.round(baseline)})`
 }

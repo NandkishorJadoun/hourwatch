@@ -15,7 +15,7 @@ const STEPS = [
   {
     icon: Play,
     title: 'Upload & forget',
-    description: 'Publish on YouTube like you always do. Tracking starts the moment it goes public.',
+    description: 'Publish on YouTube like you always do. Hourly monitoring starts the moment it goes public.',
   },
   {
     icon: Bell,
@@ -39,7 +39,7 @@ function Home() {
         <img src="/logo-512.png" alt="hourwatch" className="mb-8 h-24 w-24" />
 
         <p className="text-sm font-medium uppercase tracking-widest text-muted">
-          We watch the first six hours so you don’t have to
+          Hourly monitoring after you publish. Alerts when something’s worth knowing
         </p>
 
         <h1 className="mt-4 text-center text-4xl font-bold tracking-tight text-ink sm:text-5xl">
@@ -49,9 +49,8 @@ function Home() {
         </h1>
 
         <p className="mt-5 max-w-md text-center text-lg text-muted">
-          hourwatch monitors your new uploads for their first six hours and pings your phone with
-          what matters — views, pacing, anything notable. No more refreshing YouTube Studio every
-          minute.
+          hourwatch checks your new uploads every hour and pings your phone when something’s worth
+          knowing: views, pacing, anything notable. No more refreshing YouTube Studio every minute.
         </p>
 
         <div className="mt-10 w-full max-w-sm">
@@ -79,10 +78,14 @@ function Home() {
             </div>
           ))}
         </div>
+
+        <p className="mt-8 text-center text-xs text-muted">
+          Tracks for 6 hours by default after a video goes live. Customizable window coming soon.
+        </p>
       </main>
 
       <footer className="py-8 text-center text-xs text-muted">
-        hourwatch — upload, put your phone away, we’ll tell you what matters.
+        hourwatch. Upload, put your phone away. We’ll tell you what matters.
       </footer>
     </div>
   )

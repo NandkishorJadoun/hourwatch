@@ -1,25 +1,27 @@
 # hourwatch
 
-**Publish your videos. Step away. We monitor the first six hours for you.**
+**Publish your videos. Step away. We monitor the analytics for you.**
 
-hourwatch is a PWA for YouTube creators that watches a newly published video for its first six
-hours and pushes mobile notifications when something worth knowing happens — view counts, and how
-the upload is pacing against the channel's own average. The pitch: *upload, put your phone away,
-and stop refreshing YouTube Studio every minute.*
+hourwatch is a PWA for YouTube creators. Every hour after a video goes public, it checks the view
+count and how the upload is pacing against the channel's own average, and pushes a mobile
+notification when something worth knowing happens. Hourly monitoring runs for 6 hours by default
+after a video goes live. The pitch: *upload, put your phone away, and stop refreshing YouTube
+Studio every minute.*
 
 ## Features
 
-- **Instant upload detection** via WebSub/PubSubHubbub — no polling. The moment a video goes public,
-  a webhook tells us and a 6-hour tracking window starts.
-- **Hourly view snapshots** pulled from the YouTube Data API (`videos.list` statistics — near
+- **Instant upload detection** via WebSub/PubSubHubbub, no polling. The moment a video goes public,
+  a webhook tells us and hourly monitoring starts.
+- **Hourly view snapshots** pulled from the YouTube Data API (`videos.list` statistics: near
   real-time, not the 48h-delayed Analytics API).
-- **Baseline pacing** — once a channel has ~3 prior tracked videos, notifications compare the new
+- **Baseline pacing.** Once a channel has ~3 prior tracked videos, notifications compare the new
   upload's views against the channel's own average at the same hour.
-- **Web Push notifications** — "New video live" when a video goes public, then a check-in every hour
+- **Web Push notifications.** "New video live" when a video goes public, then a check-in every hour
   with the current number, plus a final summary when the window closes.
-- **PWA** — installable, offline-capable shell, dark-by-default with a light/dark toggle.
-- **Dashboard** — connect your channel, manage notifications, and review every tracked video and its
+- **PWA.** Installable, offline-capable shell, dark-by-default with a light/dark toggle.
+- **Dashboard.** Connect your channel, manage notifications, and review every tracked video and its
   hourly snapshot history (history stays visible after the window closes).
+- **6-hour window by default** after a video goes live (configurable in a future update).
 
 ## How it works
 
@@ -34,7 +36,7 @@ and stop refreshing YouTube Studio every minute.*
 ## Tech stack
 
 - **Framework:** TanStack Start (React 19, SSR)
-- **Host:** Cloudflare Workers — server routes, cron, and the webhook receiver all live in one Worker
+- **Host:** Cloudflare Workers. Server routes, cron, and the webhook receiver all live in one Worker
 - **Database:** Cloudflare D1 + Drizzle ORM
 - **Auth:** Better Auth (Google social provider, `accessType: "offline"`)
 - **Upload detection:** WebSub/PubSubHubbub (lease auto-renews via a daily cron)

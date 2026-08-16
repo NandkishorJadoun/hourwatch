@@ -2,7 +2,7 @@
   "id": "/",
   "name": "hourwatch",
   "short_name": "hourwatch",
-  "description": "Publish your videos. Step away. We watch the first six hours and ping you with what matters.",
+  "description": "Publish your videos. Step away. We check hourly and ping you when something is worth knowing.",
   "start_url": "/dashboard",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],

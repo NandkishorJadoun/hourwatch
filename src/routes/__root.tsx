@@ -26,10 +26,10 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          'hourwatch watches your new YouTube uploads for their first six hours and pings your phone with what matters. Publish your videos, step away — we monitor for you.',
+          'hourwatch checks your new YouTube uploads hourly and pings your phone when something is worth knowing. Publish your videos, step away. We monitor for you.',
       },
       {
-        title: 'hourwatch — publish your videos, step away',
+        title: 'hourwatch: publish your videos, step away',
       },
       {
         property: 'og:type',
@@ -37,12 +37,12 @@ export const Route = createRootRoute({
       },
       {
         property: 'og:title',
-        content: 'hourwatch — publish your videos, step away',
+        content: 'hourwatch: publish your videos, step away',
       },
       {
         property: 'og:description',
         content:
-          'We watch the first six hours of your new YouTube uploads and tell you what matters — so you never have to keep refreshing YouTube Studio.',
+          'We check your new YouTube uploads every hour and tell you what matters, so you never have to keep refreshing YouTube Studio.',
       },
       {
         property: 'og:url',
@@ -62,12 +62,12 @@ export const Route = createRootRoute({
       },
       {
         name: 'twitter:title',
-        content: 'hourwatch — publish your videos, step away',
+        content: 'hourwatch: publish your videos, step away',
       },
       {
         name: 'twitter:description',
         content:
-          'We watch the first six hours of your new YouTube uploads and ping your phone with what matters.',
+          'We check your new YouTube uploads every hour and ping your phone when something is worth knowing.',
       },
       {
         name: 'twitter:image',

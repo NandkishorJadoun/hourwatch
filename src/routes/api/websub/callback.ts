@@ -99,7 +99,7 @@ async function handleDelivery(atomXml: string) {
       try {
         await sendToChannel(channel[0].id, {
           title: 'New video live',
-          body: `"${entry.title}" is public. We're watching the next 6 hours — sit back.`,
+          body: `"${entry.title}" is public. We'll check in hourly. Sit back.`,
           url: '/dashboard',
         })
       } catch (err) {

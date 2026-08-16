@@ -155,8 +155,8 @@ function ChannelCard({
       {connected ? (
         <div className="mt-4 space-y-3 text-sm">
           <p className="text-muted">
-            Your uploads are being watched. New public videos start a 6-hour tracking window the
-            moment they go live.
+            Your uploads are being watched. New public videos start hourly tracking the moment they
+            go live, with a 6-hour window by default.
           </p>
           {leaseExpiresAt && (
             <p className="text-muted">
@@ -165,7 +165,7 @@ function ChannelCard({
             </p>
           )}
           <p className="text-xs text-muted">
-            6-hour window by default — customizable tracking window coming in an update.
+            6-hour window by default. Customizable tracking window coming in an update.
           </p>
           {!verified && (
             <button type="button" onClick={onConnect} disabled={connecting} className="btn-secondary">
@@ -184,7 +184,7 @@ function ChannelCard({
       ) : (
         <div className="mt-4 space-y-4">
           <p className="text-sm text-muted">
-            Connect your YouTube channel so hourwatch can watch the first six hours after every
+            Connect your YouTube channel so hourwatch can check your uploads every hour after every
             publish.
           </p>
           <button type="button" onClick={onConnect} disabled={connecting} className="btn-primary">

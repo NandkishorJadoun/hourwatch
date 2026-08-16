@@ -30,7 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       window.localStorage.setItem(STORAGE_KEY, theme)
       window.localStorage.removeItem(LEGACY_STORAGE_KEY)
     } catch {
-      // storage unavailable — keep in-memory theme
+      // storage unavailable; keep in-memory theme
     }
   }, [theme])
 

@@ -18,7 +18,7 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       accessType: 'offline',
       prompt: 'select_account consent',
-      requestedScopes: ['https://www.googleapis.com/auth/youtube.readonly'],
+      scope: ['https://www.googleapis.com/auth/youtube.readonly'],
     },
   },
   plugins: [tanstackStartCookies()],

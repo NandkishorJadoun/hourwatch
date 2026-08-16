@@ -1,4 +1,5 @@
-import { eq } from 'drizzle-orm'
+import { eq, isNull, lt, or } from 'drizzle-orm'
+import { env } from 'cloudflare:workers'
 
 import { db } from '#/lib/db'
 import { websubSubscriptions } from '#/db/schema'
@@ -23,9 +24,24 @@ export async function subscribeToChannel(
     .limit(1)
 
   if (existing[0]) {
+    await postSubscribe(hubTopic, callbackUrl)
     return { id: existing[0].id, hubTopic }
   }
 
+  await postSubscribe(hubTopic, callbackUrl)
+
+  const id = crypto.randomUUID()
+
+  await db.insert(websubSubscriptions).values({
+    id,
+    channelId,
+    hubTopic,
+  })
+
+  return { id, hubTopic }
+}
+
+async function postSubscribe(hubTopic: string, callbackUrl: string) {
   const body = new URLSearchParams({
     'hub.mode': 'subscribe',
     'hub.topic': hubTopic,
@@ -42,14 +58,28 @@ export async function subscribeToChannel(
   if (res.status >= 400) {
     throw new Error(`WebSub subscribe failed: ${res.status} ${await res.text()}`)
   }
+}
 
-  const id = crypto.randomUUID()
+export async function renewExpiringSubscriptions() {
+  const soon = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
-  await db.insert(websubSubscriptions).values({
-    id,
-    channelId,
-    hubTopic,
-  })
+  const rows = await db
+    .select({ id: websubSubscriptions.id, hubTopic: websubSubscriptions.hubTopic })
+    .from(websubSubscriptions)
+    .where(
+      or(
+        isNull(websubSubscriptions.leaseExpiresAt),
+        lt(websubSubscriptions.leaseExpiresAt, soon),
+      ),
+    )
 
-  return { id, hubTopic }
+  const callbackUrl = `${env.BETTER_AUTH_URL}/api/websub/callback`
+
+  for (const row of rows) {
+    try {
+      await postSubscribe(row.hubTopic, callbackUrl)
+    } catch (err) {
+      console.error(`Failed to renew subscription ${row.id}:`, err)
+    }
+  }
 }

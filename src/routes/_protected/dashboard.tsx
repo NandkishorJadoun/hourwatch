@@ -91,6 +91,9 @@ function Dashboard() {
                   {video.youtubeVideoId}
                 </a>{' '}
                 — published {published.toLocaleString()} ·{' '}
+                {video.latestViewCount !== null
+                  ? `${video.latestViewCount.toLocaleString()} views at hour ${video.latestHourOffset} · `
+                  : ''}
                 {hoursLeft > 0 ? `${hoursLeft}h left in window` : 'window closed'}
               </li>
             )

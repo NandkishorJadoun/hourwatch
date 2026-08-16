@@ -1,11 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { desc, eq } from 'drizzle-orm'
+import { desc, eq, inArray } from 'drizzle-orm'
 import { env } from 'cloudflare:workers'
 
 import { auth } from '#/lib/auth'
 import { db } from '#/lib/db'
-import { channels, trackedVideos, websubSubscriptions } from '#/db/schema'
+import { channels, trackedVideos, videoSnapshots, websubSubscriptions } from '#/db/schema'
 import { fetchMyChannel } from '#/lib/youtube'
 import { subscribeToChannel } from '#/lib/websub'
 
@@ -71,7 +71,7 @@ export const getTrackedVideos = createServerFn({ method: 'GET' }).handler(async 
     return []
   }
 
-  return db
+  const videos = await db
     .select({
       id: trackedVideos.id,
       youtubeVideoId: trackedVideos.youtubeVideoId,
@@ -82,6 +82,36 @@ export const getTrackedVideos = createServerFn({ method: 'GET' }).handler(async 
     .innerJoin(channels, eq(trackedVideos.channelId, channels.id))
     .where(eq(channels.userId, session.user.id))
     .orderBy(desc(trackedVideos.publishedAt))
+
+  if (videos.length === 0) {
+    return []
+  }
+
+  const snapshots = await db
+    .select({
+      trackedVideoId: videoSnapshots.trackedVideoId,
+      hourOffset: videoSnapshots.hourOffset,
+      viewCount: videoSnapshots.viewCount,
+    })
+    .from(videoSnapshots)
+    .where(inArray(videoSnapshots.trackedVideoId, videos.map((v) => v.id)))
+
+  const latestByVideo = new Map<string, { hourOffset: number; viewCount: number }>()
+  for (const snapshot of snapshots) {
+    const current = latestByVideo.get(snapshot.trackedVideoId)
+    if (!current || snapshot.hourOffset > current.hourOffset) {
+      latestByVideo.set(snapshot.trackedVideoId, {
+        hourOffset: snapshot.hourOffset,
+        viewCount: snapshot.viewCount,
+      })
+    }
+  }
+
+  return videos.map((video) => ({
+    ...video,
+    latestViewCount: latestByVideo.get(video.id)?.viewCount ?? null,
+    latestHourOffset: latestByVideo.get(video.id)?.hourOffset ?? null,
+  }))
 })
 
 export const getChannelConnection = createServerFn({ method: 'GET' }).handler(async () => {

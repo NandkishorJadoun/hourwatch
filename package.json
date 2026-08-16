@@ -17,6 +17,7 @@
     "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.6.29",
     "@tanstack/react-router": "latest",
     "@tanstack/react-start": "latest",
     "better-auth": "^1.6.28",

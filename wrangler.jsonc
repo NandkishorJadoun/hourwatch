@@ -7,13 +7,16 @@
   ],
   "main": "src/server.ts",
   "vars": {
-    "BETTER_AUTH_URL": "https://first6.2006.workers.dev"
+    "BETTER_AUTH_URL": "https://first6.2006.workers.dev",
+    "VAPID_PUBLIC_KEY": "BLFzR-MTooko4KsTXzt7tI2ZyqawOt_qPwvOFqzDZW8r8b_ZJksKP0ONQYWtk-RTFF0w3IE-bgFl_UHOqtSjb24",
+    "VAPID_SUBJECT": "https://github.com/NandkishorJadoun/first6"
   },
   "secrets": {
     "required": [
       "GOOGLE_CLIENT_ID",
       "GOOGLE_CLIENT_SECRET",
-      "BETTER_AUTH_SECRET"
+      "BETTER_AUTH_SECRET",
+      "VAPID_PRIVATE_KEY"
     ]
   },
   "triggers": {

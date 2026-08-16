@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 
 import { db } from '#/lib/db'
 import { channels, trackedVideos, websubSubscriptions } from '#/db/schema'
+import { sendToChannel } from '#/lib/push'
 
 const TRACKING_WINDOW_MS = 6 * 60 * 60 * 1000
 
@@ -70,7 +71,7 @@ async function handleDelivery(atomXml: string) {
 
     const publishedAt = new Date(entry.published ?? Date.now())
 
-    await db
+    const result = await db
       .insert(trackedVideos)
       .values({
         id: crypto.randomUUID(),
@@ -80,17 +81,37 @@ async function handleDelivery(atomXml: string) {
         trackingEndsAt: new Date(publishedAt.getTime() + TRACKING_WINDOW_MS),
       })
       .onConflictDoNothing({ target: trackedVideos.youtubeVideoId })
+      .run()
+
+    const changes = result.meta.changes ?? 0
+    if (changes > 0) {
+      try {
+        await sendToChannel(channel[0].id, {
+          title: 'New video detected',
+          body: `"${entry.title}" is live — tracking started, we'll check in hourly.`,
+          url: '/dashboard',
+        })
+      } catch (err) {
+        console.error('Failed to send upload notification:', err)
+      }
+    }
   }
 }
 
 function extractEntries(
   xml: string,
-): Array<{ videoId?: string; channelId?: string; published?: string }> {
-  const entries: Array<{ videoId?: string; channelId?: string; published?: string }> = []
+): Array<{ videoId?: string; channelId?: string; published?: string; title?: string }> {
+  const entries: Array<{
+    videoId?: string
+    channelId?: string
+    published?: string
+    title?: string
+  }> = []
   const entryRe = /<entry[\s\S]*?<\/entry>/g
   const videoIdRe = /<yt:videoId>([^<]+)<\/yt:videoId>/
   const channelIdRe = /<yt:channelId>([^<]+)<\/yt:channelId>/
   const publishedRe = /<published>([^<]+)<\/published>/
+  const titleRe = /<title>([^<]+)<\/title>/
 
   let match: RegExpExecArray | null
   while ((match = entryRe.exec(xml)) !== null) {
@@ -99,6 +120,7 @@ function extractEntries(
       videoId: chunk.match(videoIdRe)?.[1],
       channelId: chunk.match(channelIdRe)?.[1],
       published: chunk.match(publishedRe)?.[1],
+      title: chunk.match(titleRe)?.[1],
     })
   }
 

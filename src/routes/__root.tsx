@@ -1,4 +1,5 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { useEffect } from 'react'
 
 import appCss from '../styles.css?url'
 
@@ -13,6 +14,10 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
+        name: 'theme-color',
+        content: '#3b3cde',
+      },
+      {
         title: 'first6',
       },
     ],
@@ -21,12 +26,24 @@ export const Route = createRootRoute({
         rel: 'stylesheet',
         href: appCss,
       },
+      {
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
+      },
     ],
   }),
   shellComponent: RootDocument,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {
+        // SW registration is best-effort
+      })
+    }
+  }, [])
+
   return (
     <html lang="en">
       <head>

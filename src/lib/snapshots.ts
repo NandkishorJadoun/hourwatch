@@ -3,9 +3,10 @@ import { eq, gt } from 'drizzle-orm'
 import { auth } from '#/lib/auth'
 import { db } from '#/lib/db'
 import { channels, trackedVideos, videoSnapshots } from '#/db/schema'
+import { getBaseline } from '#/lib/baseline'
+import { sendToChannel } from '#/lib/push'
 
 const HOUR_MS = 60 * 60 * 1000
-const INSERT_CHUNK = 20
 
 export async function runHourlySnapshots() {
   const now = Date.now()
@@ -47,8 +48,6 @@ export async function runHourlySnapshots() {
         userRows.map((row) => row.youtubeVideoId),
       )
 
-      const inserts: (typeof videoSnapshots.$inferInsert)[] = []
-
       for (const row of userRows) {
         const viewCount = viewCounts.get(row.youtubeVideoId)
         if (viewCount === undefined) continue
@@ -56,29 +55,63 @@ export async function runHourlySnapshots() {
         const hourOffset = Math.floor((now - row.publishedAt.getTime()) / HOUR_MS)
         if (hourOffset < 0) continue
 
-        inserts.push({
-          id: crypto.randomUUID(),
-          trackedVideoId: row.videoId,
-          hourOffset,
-          viewCount,
-          checkedAt: new Date(now),
-        })
-      }
+        const result = await db
+          .insert(videoSnapshots)
+          .values({
+            id: crypto.randomUUID(),
+            trackedVideoId: row.videoId,
+            hourOffset,
+            viewCount,
+            checkedAt: new Date(now),
+          })
+          .onConflictDoNothing()
+          .run()
 
-      if (inserts.length > 0) {
-        const chunks: (typeof videoSnapshots.$inferInsert)[][] = []
-        for (let i = 0; i < inserts.length; i += INSERT_CHUNK) {
-          chunks.push(inserts.slice(i, i + INSERT_CHUNK))
-        }
+        const inserted = result.meta.changes ?? 0
+        if (inserted === 0) continue
 
-        for (const chunk of chunks) {
-          await db.insert(videoSnapshots).values(chunk).onConflictDoNothing()
-        }
+        await notifySnapshot(row, hourOffset, viewCount)
       }
     } catch (err) {
       console.error(`Snapshot run failed for user ${userId}:`, err)
     }
   }
+}
+
+async function notifySnapshot(
+  row: {
+    videoId: string
+    youtubeVideoId: string
+    publishedAt: Date
+    channelId: string
+  },
+  hourOffset: number,
+  viewCount: number,
+) {
+  try {
+    const baseline = await getBaseline(row.channelId, row.publishedAt, hourOffset)
+
+    const body =
+      baseline === null
+        ? `${viewCount.toLocaleString()} views at hour ${hourOffset}`
+        : withBaselineCopy(viewCount, hourOffset, baseline)
+
+    await sendToChannel(row.channelId, {
+      title: 'View update',
+      body,
+      url: '/dashboard',
+    })
+  } catch (err) {
+    console.error('Failed to send snapshot notification:', err)
+  }
+}
+
+function withBaselineCopy(viewCount: number, hourOffset: number, baseline: number): string {
+  const pct = baseline === 0 ? 0 : Math.round(((viewCount - baseline) / baseline) * 100)
+  const direction = pct >= 0 ? 'above' : 'below'
+  return `${viewCount.toLocaleString()} views at hour ${hourOffset} — ${Math.abs(
+    pct,
+  )}% ${direction} your channel average (${Math.round(baseline)})`
 }
 
 async function fetchViewCounts(accessToken: string, videoIds: string[]) {

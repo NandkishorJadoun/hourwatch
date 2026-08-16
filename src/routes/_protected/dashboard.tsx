@@ -1,7 +1,13 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { connectChannel, getChannelConnection, getTrackedVideos } from '#/lib/channel.functions'
+import {
+  deletePushSubscription,
+  getVapidPublicKey,
+  savePushSubscription,
+} from '#/lib/push.functions'
+import { disableNotifications, enableNotifications, getExistingSubscription } from '#/lib/push.web'
 import { authClient } from '#/lib/auth-client'
 
 export const Route = createFileRoute('/_protected/dashboard')({
@@ -69,6 +75,8 @@ function Dashboard() {
         </div>
       )}
 
+      {activeConnection && <NotificationsSection />}
+
       <h2>Tracked videos</h2>
       {videos.length === 0 ? (
         <p>No tracked videos yet. Publish a public video and it will show up here.</p>
@@ -105,5 +113,82 @@ function Dashboard() {
         <Link to="/">Home</Link>
       </p>
     </main>
+  )
+}
+
+function NotificationsSection() {
+  const [status, setStatus] = useState<'checking' | 'on' | 'off' | 'unsupported'>('checking')
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const check = async () => {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        if (!cancelled) setStatus('unsupported')
+        return
+      }
+      const existing = await getExistingSubscription()
+      if (!cancelled) setStatus(existing ? 'on' : 'off')
+    }
+    void check()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const onEnable = async () => {
+    setError(null)
+    try {
+      const publicKey = await getVapidPublicKey()
+      await enableNotifications(publicKey, (sub) => savePushSubscription({ data: sub }))
+      setStatus('on')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to enable notifications')
+    }
+  }
+
+  const onDisable = async () => {
+    setError(null)
+    try {
+      const existing = await getExistingSubscription()
+      await disableNotifications(existing, ({ endpoint }) =>
+        deletePushSubscription({ data: { endpoint } }),
+      )
+      setStatus('off')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to disable notifications')
+    }
+  }
+
+  if (status === 'unsupported') {
+    return (
+      <div>
+        <h2>Notifications</h2>
+        <p>Web Push is not supported in this browser.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <h2>Notifications</h2>
+      {status === 'checking' && <p>Checking…</p>}
+      {status === 'on' && (
+        <div>
+          <p>Notifications enabled — you'll hear when a video is published and hourly while it's tracked.</p>
+          <button type="button" onClick={onDisable}>
+            Disable notifications
+          </button>
+        </div>
+      )}
+      {status === 'off' && (
+        <div>
+          <button type="button" onClick={onEnable}>
+            Enable notifications
+          </button>
+        </div>
+      )}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+    </div>
   )
 }

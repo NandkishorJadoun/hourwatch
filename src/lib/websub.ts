@@ -10,10 +10,11 @@ export const youtubeTopic = (channelId: string) =>
   `https://www.youtube.com/xml/feeds/videos.xml?channel_id=${channelId}`
 
 export async function subscribeToChannel(
+  youtubeChannelId: string,
   channelId: string,
   callbackUrl: string,
 ): Promise<{ id: string; hubTopic: string }> {
-  const hubTopic = youtubeTopic(channelId)
+  const hubTopic = youtubeTopic(youtubeChannelId)
 
   const existing = await db
     .select()

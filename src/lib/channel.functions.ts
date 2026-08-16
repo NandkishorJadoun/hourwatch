@@ -1,11 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { env } from 'cloudflare:workers'
 
 import { auth } from '#/lib/auth'
 import { db } from '#/lib/db'
-import { channels, websubSubscriptions } from '#/db/schema'
+import { channels, trackedVideos, websubSubscriptions } from '#/db/schema'
 import { fetchMyChannel } from '#/lib/youtube'
 import { subscribeToChannel } from '#/lib/websub'
 
@@ -55,11 +55,33 @@ export const connectChannel = createServerFn({ method: 'POST' }).handler(async (
   }
 
   const subscription = await subscribeToChannel(
+    channelRow.youtubeChannelId,
     channelRow.id,
     `${env.BETTER_AUTH_URL}/api/websub/callback`,
   )
 
   return { channel: { id: channel.id, title: channel.title }, subscription }
+})
+
+export const getTrackedVideos = createServerFn({ method: 'GET' }).handler(async () => {
+  const headers = getRequestHeaders()
+  const session = await auth.api.getSession({ headers })
+
+  if (!session) {
+    return []
+  }
+
+  return db
+    .select({
+      id: trackedVideos.id,
+      youtubeVideoId: trackedVideos.youtubeVideoId,
+      publishedAt: trackedVideos.publishedAt,
+      trackingEndsAt: trackedVideos.trackingEndsAt,
+    })
+    .from(trackedVideos)
+    .innerJoin(channels, eq(trackedVideos.channelId, channels.id))
+    .where(eq(channels.userId, session.user.id))
+    .orderBy(desc(trackedVideos.publishedAt))
 })
 
 export const getChannelConnection = createServerFn({ method: 'GET' }).handler(async () => {

@@ -55,7 +55,7 @@ export const connectChannel = createServerFn({ method: 'POST' }).handler(async (
   }
 
   const subscription = await subscribeToChannel(
-    channel.id,
+    channelRow.id,
     `${env.BETTER_AUTH_URL}/api/websub/callback`,
   )
 

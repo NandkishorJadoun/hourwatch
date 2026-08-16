@@ -1,9 +1,12 @@
 {
-  "name": "first6",
-  "short_name": "first6",
-  "description": "Watch your first six hours after publishing.",
+  "id": "/",
+  "name": "hourwatch",
+  "short_name": "hourwatch",
+  "description": "Publish your videos. Step away. We watch the first six hours and ping you with what matters.",
   "start_url": "/dashboard",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "categories": ["productivity", "video"],
   "background_color": "#0f0f0f",
   "theme_color": "#0f0f0f",
   "icons": [
@@ -18,6 +21,13 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/dashboard",
+      "description": "Open your tracked videos"
     }
   ]
 }

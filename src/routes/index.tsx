@@ -9,18 +9,18 @@ export const Route = createFileRoute('/')({ component: Home })
 const STEPS = [
   {
     icon: Plug,
-    title: 'Connect your channel',
-    description: 'Sign in with Google and link your YouTube channel. That’s it.',
+    title: 'Connect once',
+    description: 'Sign in with Google and link your YouTube channel. We handle the rest.',
   },
   {
     icon: Play,
-    title: 'Publish on YouTube',
-    description: 'Upload a public video like you always do. We detect it the moment it goes live.',
+    title: 'Upload & forget',
+    description: 'Publish on YouTube like you always do. Tracking starts the moment it goes public.',
   },
   {
     icon: Bell,
-    title: 'We watch the first six hours',
-    description: 'An hourly check tracks views against your own baseline and pings your phone.',
+    title: 'We report, you relax',
+    description: 'Hourly updates on your phone, paced against your channel average. Keep doing your thing.',
   },
 ]
 
@@ -36,17 +36,22 @@ function Home() {
       <AppHeader />
 
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center px-4 pt-16 sm:pt-24">
-        <img src="/logo-512.png" alt="first6" className="mb-8 h-24 w-24" />
+        <img src="/logo-512.png" alt="hourwatch" className="mb-8 h-24 w-24" />
 
-        <h1 className="text-center text-4xl font-bold tracking-tight text-ink sm:text-5xl">
-          Publish it.
+        <p className="text-sm font-medium uppercase tracking-widest text-muted">
+          We watch the first six hours so you don’t have to
+        </p>
+
+        <h1 className="mt-4 text-center text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+          Publish your videos.
           <br />
-          Put your phone away.
+          Step away.
         </h1>
 
         <p className="mt-5 max-w-md text-center text-lg text-muted">
-          first6 watches your freshly published video for its first six hours and tells you what
-          matters — so you don’t have to keep refreshing analytics.
+          hourwatch monitors your new uploads for their first six hours and pings your phone with
+          what matters — views, pacing, anything notable. No more refreshing YouTube Studio every
+          minute.
         </p>
 
         <div className="mt-10 w-full max-w-sm">
@@ -77,7 +82,7 @@ function Home() {
       </main>
 
       <footer className="py-8 text-center text-xs text-muted">
-        first6 — no F5, no refresh, no refresh anxiety.
+        hourwatch — upload, put your phone away, we’ll tell you what matters.
       </footer>
     </div>
   )

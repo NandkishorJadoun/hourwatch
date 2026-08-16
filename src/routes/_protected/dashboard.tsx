@@ -164,6 +164,9 @@ function ChannelCard({
               <span className="text-ink">{new Date(leaseExpiresAt).toLocaleString()}</span>
             </p>
           )}
+          <p className="text-xs text-muted">
+            6-hour window by default — customizable tracking window coming in an update.
+          </p>
           {!verified && (
             <button type="button" onClick={onConnect} disabled={connecting} className="btn-secondary">
               {connecting ? (
@@ -181,7 +184,8 @@ function ChannelCard({
       ) : (
         <div className="mt-4 space-y-4">
           <p className="text-sm text-muted">
-            Connect your YouTube channel so first6 can watch the first six hours after every publish.
+            Connect your YouTube channel so hourwatch can watch the first six hours after every
+            publish.
           </p>
           <button type="button" onClick={onConnect} disabled={connecting} className="btn-primary">
             {connecting ? (

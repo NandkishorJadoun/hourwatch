@@ -24,7 +24,54 @@ export const Route = createRootRoute({
         content: 'dark light',
       },
       {
-        title: 'first6 — your first six hours, watched',
+        name: 'description',
+        content:
+          'hourwatch watches your new YouTube uploads for their first six hours and pings your phone with what matters. Publish your videos, step away — we monitor for you.',
+      },
+      {
+        title: 'hourwatch — publish your videos, step away',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:title',
+        content: 'hourwatch — publish your videos, step away',
+      },
+      {
+        property: 'og:description',
+        content:
+          'We watch the first six hours of your new YouTube uploads and tell you what matters — so you never have to keep refreshing YouTube Studio.',
+      },
+      {
+        property: 'og:url',
+        content: 'https://hourwatch.2006.workers.dev',
+      },
+      {
+        property: 'og:image',
+        content: 'https://hourwatch.2006.workers.dev/logo-512.png',
+      },
+      {
+        property: 'og:site_name',
+        content: 'hourwatch',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary',
+      },
+      {
+        name: 'twitter:title',
+        content: 'hourwatch — publish your videos, step away',
+      },
+      {
+        name: 'twitter:description',
+        content:
+          'We watch the first six hours of your new YouTube uploads and ping your phone with what matters.',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://hourwatch.2006.workers.dev/logo-512.png',
       },
     ],
     links: [

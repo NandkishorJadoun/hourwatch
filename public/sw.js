@@ -1,5 +1,5 @@
 self.addEventListener('push', (event) => {
-  let data = { title: 'first6', body: '', url: '/' }
+  let data = { title: 'hourwatch', body: '', url: '/' }
   try {
     data = { ...data, ...(event.data ? event.data.json() : {}) }
   } catch {
@@ -10,7 +10,7 @@ self.addEventListener('push', (event) => {
     self.registration.showNotification(data.title, {
       body: data.body,
       data: { url: data.url },
-      tag: 'first6',
+      tag: 'hourwatch',
       icon: '/logo-192.png',
       badge: '/logo-192.png',
     }),

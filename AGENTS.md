@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> Working name: **first6** (swap in one line if you land on something else — nothing else in this doc depends on the name).
+> Working name: **hourwatch** (swap in one line if you land on something else — nothing else in this doc depends on the name).
 
 ## What this app is
 

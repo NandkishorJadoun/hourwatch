@@ -1,13 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "first6",
+  "name": "hourwatch",
   "compatibility_date": "2025-09-02",
   "compatibility_flags": [
     "nodejs_compat"
   ],
   "main": "src/server.ts",
   "vars": {
-    "BETTER_AUTH_URL": "https://first6.2006.workers.dev",
+    "BETTER_AUTH_URL": "https://hourwatch.2006.workers.dev",
     "VAPID_PUBLIC_KEY": "BLFzR-MTooko4KsTXzt7tI2ZyqawOt_qPwvOFqzDZW8r8b_ZJksKP0ONQYWtk-RTFF0w3IE-bgFl_UHOqtSjb24",
     "VAPID_SUBJECT": "https://github.com/NandkishorJadoun/first6"
   },

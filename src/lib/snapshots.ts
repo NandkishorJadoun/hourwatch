@@ -8,6 +8,43 @@ import { sendToChannel } from '#/lib/push'
 
 const HOUR_MS = 60 * 60 * 1000
 
+export interface TrackedVideoInput {
+  id: string
+  channelId: string
+  userId: string
+  youtubeVideoId: string
+  publishedAt: Date
+}
+
+export async function captureSnapshotForVideo(video: TrackedVideoInput) {
+  const { accessToken } = await auth.api.getAccessToken({
+    body: { providerId: 'google', userId: video.userId },
+  })
+
+  if (!accessToken) {
+    console.error(`First snapshot: no access token for user ${video.userId}`)
+    return
+  }
+
+  const viewCounts = await fetchViewCounts(accessToken, [video.youtubeVideoId])
+  const viewCount = viewCounts.get(video.youtubeVideoId)
+  if (viewCount === undefined) return
+
+  const hourOffset = Math.max(0, Math.floor((Date.now() - video.publishedAt.getTime()) / HOUR_MS))
+
+  await db
+    .insert(videoSnapshots)
+    .values({
+      id: crypto.randomUUID(),
+      trackedVideoId: video.id,
+      hourOffset,
+      viewCount,
+      checkedAt: new Date(),
+    })
+    .onConflictDoNothing()
+    .run()
+}
+
 export async function runHourlySnapshots() {
   const now = Date.now()
 
@@ -91,13 +128,14 @@ async function notifySnapshot(
   try {
     const baseline = await getBaseline(row.channelId, row.publishedAt, hourOffset)
 
+    const prefix = hourOffset >= 5 ? 'Final check · ' : ''
     const body =
       baseline === null
-        ? `${viewCount.toLocaleString()} views at hour ${hourOffset}`
-        : withBaselineCopy(viewCount, hourOffset, baseline)
+        ? `${prefix}${viewCount.toLocaleString()} views at hour ${hourOffset}`
+        : `${prefix}${withBaselineCopy(viewCount, hourOffset, baseline)}`
 
     await sendToChannel(row.channelId, {
-      title: 'View update',
+      title: '6-hour check',
       body,
       url: '/dashboard',
     })

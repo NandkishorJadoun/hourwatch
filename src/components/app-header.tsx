@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
-import { LogOut, Moon, Sun } from 'lucide-react'
+import { Download, LogOut, Moon, Sun } from 'lucide-react'
 
 import { authClient } from '#/lib/auth-client'
 import { useTheme } from '#/lib/theme'
+import { usePwaInstall } from '#/lib/use-pwa-install'
 
 type AppUser = {
   name: string
@@ -11,6 +12,7 @@ type AppUser = {
 
 export function AppHeader({ user }: { user?: AppUser | null }) {
   const { theme, toggleTheme } = useTheme()
+  const { canInstall, install } = usePwaInstall()
 
   const onSignOut = async () => {
     await authClient.signOut()
@@ -21,10 +23,22 @@ export function AppHeader({ user }: { user?: AppUser | null }) {
     <header className="sticky top-0 z-40 border-b border-line bg-chrome">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4">
         <Link to="/dashboard" className="flex items-center">
-          <img src="/logo-192.png" alt="first6" className="h-9 w-auto" />
+          <img src="/logo-192.png" alt="hourwatch" className="h-9 w-auto" />
         </Link>
 
         <div className="flex items-center gap-1">
+          {canInstall && (
+            <button
+              type="button"
+              onClick={() => void install()}
+              aria-label="Install hourwatch as an app"
+              title="Install app"
+              className="btn-icon"
+            >
+              <Download className="size-5" />
+            </button>
+          )}
+
           <button
             type="button"
             onClick={toggleTheme}

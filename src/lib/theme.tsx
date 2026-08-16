@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 
 export type Theme = 'dark' | 'light'
 
-const STORAGE_KEY = 'first6-theme'
+const STORAGE_KEY = 'hourwatch-theme'
+const LEGACY_STORAGE_KEY = 'first6-theme'
 
 function getStoredTheme(): Theme {
   if (typeof window === 'undefined') return 'dark'
@@ -27,6 +28,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     applyTheme(theme)
     try {
       window.localStorage.setItem(STORAGE_KEY, theme)
+      window.localStorage.removeItem(LEGACY_STORAGE_KEY)
     } catch {
       // storage unavailable — keep in-memory theme
     }

@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '#/lib/db'
 import { channels, trackedVideos, websubSubscriptions } from '#/db/schema'
 import { sendToChannel } from '#/lib/push'
+import { captureSnapshotForVideo } from '#/lib/snapshots'
 
 const TRACKING_WINDOW_MS = 6 * 60 * 60 * 1000
 
@@ -71,10 +72,12 @@ async function handleDelivery(atomXml: string) {
 
     const publishedAt = new Date(entry.published ?? Date.now())
 
+    const videoId = crypto.randomUUID()
+
     const result = await db
       .insert(trackedVideos)
       .values({
-        id: crypto.randomUUID(),
+        id: videoId,
         channelId: channel[0].id,
         youtubeVideoId: entry.videoId,
         publishedAt,
@@ -85,10 +88,18 @@ async function handleDelivery(atomXml: string) {
 
     const changes = result.meta.changes ?? 0
     if (changes > 0) {
+      await captureSnapshotForVideo({
+        id: videoId,
+        channelId: channel[0].id,
+        userId: channel[0].userId,
+        youtubeVideoId: entry.videoId,
+        publishedAt,
+      })
+
       try {
         await sendToChannel(channel[0].id, {
-          title: 'New video detected',
-          body: `"${entry.title}" is live — tracking started, we'll check in hourly.`,
+          title: 'New video live',
+          body: `"${entry.title}" is public. We're watching the next 6 hours — sit back.`,
           url: '/dashboard',
         })
       } catch (err) {

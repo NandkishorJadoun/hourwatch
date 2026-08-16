@@ -6,6 +6,16 @@
     "nodejs_compat"
   ],
   "main": "@tanstack/react-start/server-entry",
+  "vars": {
+    "BETTER_AUTH_URL": "https://first6.2006.workers.dev"
+  },
+  "secrets": {
+    "required": [
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET",
+      "BETTER_AUTH_SECRET"
+    ]
+  },
   "d1_databases": [
     {
       "binding": "DB",

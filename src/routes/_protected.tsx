@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
+import { AppHeader } from '#/components/app-header'
 import { getSession } from '#/lib/auth.functions'
 
 export const Route = createFileRoute('/_protected')({
@@ -12,5 +13,14 @@ export const Route = createFileRoute('/_protected')({
 
     return { user: session.user }
   },
-  component: () => <Outlet />,
+  component: () => {
+    const { user } = Route.useRouteContext()
+
+    return (
+      <div className="min-h-screen">
+        <AppHeader user={user} />
+        <Outlet />
+      </div>
+    )
+  },
 })

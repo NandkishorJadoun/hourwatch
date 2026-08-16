@@ -1,6 +1,8 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
+import { ThemeProvider, themeInitScript } from '../lib/theme'
+
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
@@ -15,10 +17,14 @@ export const Route = createRootRoute({
       },
       {
         name: 'theme-color',
-        content: '#3b3cde',
+        content: '#0f0f0f',
       },
       {
-        title: 'first6',
+        name: 'color-scheme',
+        content: 'dark light',
+      },
+      {
+        title: 'first6 — your first six hours, watched',
       },
     ],
     links: [
@@ -29,6 +35,20 @@ export const Route = createRootRoute({
       {
         rel: 'manifest',
         href: '/manifest.webmanifest',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        href: '/logo-192.png',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/logo-192.png',
+      },
+    ],
+    scripts: [
+      {
+        children: themeInitScript,
       },
     ],
   }),
@@ -50,7 +70,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <Scripts />
       </body>
     </html>

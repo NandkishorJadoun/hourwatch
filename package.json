@@ -18,12 +18,15 @@
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "^1.6.29",
+    "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-router": "latest",
     "@tanstack/react-start": "latest",
     "better-auth": "^1.6.28",
     "drizzle-orm": "^0.45.2",
+    "lucide-react": "^1.31.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "tailwindcss": "^4.3.3",
     "web-push": "^3.6.7"
   },
   "devDependencies": {

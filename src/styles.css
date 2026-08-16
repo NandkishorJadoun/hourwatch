@@ -1,16 +1,110 @@
+@import "tailwindcss";
 
-
-* {
-  box-sizing: border-box;
+:root,
+[data-theme="dark"] {
+  --bg: #0f0f0f;
+  --chrome: #282828;
+  --surface: #272727;
+  --surface-hover: #303030;
+  --border: #3f3f3f;
+  --text: #f1f1f1;
+  --muted: #aaaaaa;
+  --accent: #ff0000;
+  --accent-hover: #cc0000;
+  --link: #3ea6ff;
+  --success: #2ba640;
+  --warning: #fbbc04;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
+[data-theme="light"] {
+  --bg: #ffffff;
+  --chrome: #ffffff;
+  --surface: #ffffff;
+  --surface-hover: #f2f2f2;
+  --border: #e5e5e5;
+  --text: #0f0f0f;
+  --muted: #606060;
+  --accent: #ff0000;
+  --accent-hover: #cc0000;
+  --link: #065fd4;
+  --success: #188038;
+  --warning: #b06000;
 }
 
-main {
-  width: min(42rem, calc(100% - 2rem));
-  margin: 4rem auto;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-chrome: var(--chrome);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-bg text-ink antialiased;
+    font-family: var(--font-sans);
+  }
+
+  * {
+    scrollbar-width: thin;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-white transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-5 py-2.5 text-sm font-medium text-ink transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--surface-hover);
+  }
+
+  .btn-icon {
+    @apply inline-flex size-10 items-center justify-center rounded-full text-ink transition-colors duration-150;
+  }
+
+  .btn-icon:hover {
+    background-color: var(--surface-hover);
+  }
+
+  .card {
+    @apply rounded-lg border border-line bg-surface;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-muted;
+  }
+
+  .progress-track {
+    @apply h-1.5 w-full overflow-hidden rounded-full bg-line;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full bg-accent transition-[width] duration-500;
+  }
+}
